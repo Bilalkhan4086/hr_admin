@@ -4,7 +4,7 @@ import { allUsers } from '../actions/userActions';
 const initialState = {
   loading: false,
   users: [],
-  success: false,
+  //   success: false,
   error: null,
 };
 
@@ -21,7 +21,6 @@ const userSlice = createSlice({
     builder
       .addCase(allUsers.pending, (state) => {
         state.loading = true;
-        state.success = false;
       })
       .addCase(allUsers.fulfilled, (state, action) => {
         state.loading = false;

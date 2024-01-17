@@ -10,18 +10,18 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import UserData from 'src/httpRequests';
+// import UserData from 'src/httpRequests';
+import { allUsers } from 'src/redux-toolkit/actions/userActions';
 // import { users } from 'src/_mock/user';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import BarLoader from 'react-spinners/BarLoader';
 import { useTheme } from '@mui/material/styles';
-// import TableNoData from '../table-no-data';
+
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
-import { allUsers } from 'src/redux-toolkit/actions/userActions';
 
 // import { emptyRows, applyFilter, getComparator } from '../utils';
 
@@ -39,7 +39,7 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [userData, setUserData] = useState(null);
+  // const [userData, setUserData] = useState(null);
   const theme = useTheme();
 
   const dispatch = useDispatch();
@@ -71,7 +71,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = userData?.map((n) => n.username);
+      const newSelecteds = users?.map((n) => n.username);
       setSelected(newSelecteds);
       return;
     }
@@ -147,7 +147,7 @@ export default function UserPage() {
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            {userData === null ? (
+            {users === null ? (
               <div
                 style={{
                   display: 'flex',
@@ -164,7 +164,7 @@ export default function UserPage() {
                 <UserTableHead
                   // order={order}
                   // orderBy={orderBy}
-                  rowCount={userData?.length}
+                  rowCount={users?.length}
                   numSelected={selected.length}
                   onRequestSort={handleSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -177,28 +177,28 @@ export default function UserPage() {
                   ]}
                 />
 
-                {/* {users && */}
-                {users.map((data) => (
-                  <TableBody key={data.id}>
-                    <UserTableRow
-                      key={data.id}
-                      name={data.username}
-                      date_joined={data.date_joined}
-                      email={data.email}
-                      avatarURL={data.profilePictureURL}
-                      selected={selected.indexOf(data.username) !== -1}
-                      handleClick={(event) => handleClick(event, data.username)}
-                    />
-                    {/* ))} */}
+                {users &&
+                  users.map((data) => (
+                    <TableBody key={data.id}>
+                      <UserTableRow
+                        key={data.id}
+                        name={data.username}
+                        date_joined={data.date_joined}
+                        email={data.email}
+                        avatarURL={data.profilePictureURL}
+                        selected={selected.indexOf(data.username) !== -1}
+                        handleClick={(event) => handleClick(event, data.username)}
+                      />
+                      {/* ))} */}
 
-                    <TableEmptyRows
-                      height={77}
-                      // emptyRows={emptyRows(page, rowsPerPage, userData?.length)}
-                    />
+                      <TableEmptyRows
+                        height={77}
+                        // emptyRows={emptyRows(page, rowsPerPage, userData?.length)}
+                      />
 
-                    {/* {notFound && <TableNoData query={filterName} />} */}
-                  </TableBody>
-                ))}
+                      {/* {notFound && <TableNoData query={filterName} />} */}
+                    </TableBody>
+                  ))}
               </Table>
             )}
           </TableContainer>
@@ -207,7 +207,7 @@ export default function UserPage() {
         <TablePagination
           page={page}
           component="div"
-          count={userData?.length}
+          count={users?.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
