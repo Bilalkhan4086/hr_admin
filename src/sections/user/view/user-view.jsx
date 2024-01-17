@@ -9,7 +9,7 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import UserData from 'src/httpRequests';
+import UserData from 'src/services/httpRequests';
 // import { users } from 'src/_mock/user';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -20,6 +20,7 @@ import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
+import setupApiInterceptor from 'src/services/httpRequests';
 // import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -108,7 +109,30 @@ export default function UserPage() {
 
   // const notFound = !dataFiltered.length && !!filterName;
 
-  console.log('the user data for the user  is ', userData);
+  const usersURL = 'https://api.enxsis.com/api/v1/users';
+
+  const fetchData = async () => {
+    const headers = {
+      // Your headers go here
+      Authorization: 'Bearer your_access_token',
+      'Content-Type': 'application/json',
+      // Add more headers if needed
+    };
+    try {
+      // Call setupApiInterceptor and wait for the result
+      const responseData = await setupApiInterceptor(usersURL, headers);
+      console.log('Data received:', responseData);
+      setUserData(responseData.users);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // console.log('the user data for the user  is ', userData);
 
   return (
     <Container>
