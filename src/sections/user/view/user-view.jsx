@@ -9,7 +9,7 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import UserData from 'src/httpRequests';
+import UserData from 'src/services/httpRequests';
 // import { users } from 'src/_mock/user';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -21,6 +21,8 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 // import { emptyRows, applyFilter, getComparator } from '../utils';
+import setupApiInterceptor from 'src/services/httpRequests';
+import { BaseURL } from 'src/utils/BaseURL/URL';
 
 // ----------------------------------------------------------------------
 
@@ -39,13 +41,13 @@ export default function UserPage() {
   const [userData, setUserData] = useState(null);
   const theme = useTheme();
 
-  useEffect(() => {
-    UserData()
-      .then((data) => setUserData(data.data.users))
-      .catch((error) => {
-        console.error('Error in AnotherComponent:', error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   UserData()
+  //     .then((data) => setUserData(data.data.users))
+  //     .catch((error) => {
+  //       console.error('Error in AnotherComponent:', error);
+  //     });
+  // }, []);
 
   console.log('++++++>>>>>>>', userData?.length);
 
@@ -84,8 +86,6 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
-  console.log('>>>>>++++', selected);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -110,6 +110,22 @@ export default function UserPage() {
 
   console.log('the user data for the user  is ', userData);
 
+  const fetchData = async () => {
+    try {
+      // Call setupApiInterceptor and wait for the result
+      const responseData = await setupApiInterceptor(`${BaseURL}/users`);
+      console.log('Data received:', responseData);
+      setUserData(responseData.users);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  console.log('the user data is ', userData);
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
