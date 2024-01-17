@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -20,6 +21,8 @@ import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
+import { allUsers } from 'src/redux-toolkit/actions/userActions';
+
 // import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -39,15 +42,24 @@ export default function UserPage() {
   const [userData, setUserData] = useState(null);
   const theme = useTheme();
 
-  useEffect(() => {
-    UserData()
-      .then((data) => setUserData(data.data.users))
-      .catch((error) => {
-        console.error('Error in AnotherComponent:', error);
-      });
-  }, []);
+  const dispatch = useDispatch();
 
-  console.log('++++++>>>>>>>', userData?.length);
+  const users = useSelector((state) => state.user.users.data?.users);
+
+  console.log('wanted user', users);
+
+  useEffect(() => {
+    dispatch(allUsers());
+  }, [dispatch]);
+  // useEffect(() => {
+  //   UserData()
+  //     .then((data) => setUserData(data.data.users))
+  //     .catch((error) => {
+  //       console.error('Error in AnotherComponent:', error);
+  //     });
+  // }, []);
+
+  // console.log('++++++>>>>>>>', userData?.length);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -108,7 +120,7 @@ export default function UserPage() {
 
   // const notFound = !dataFiltered.length && !!filterName;
 
-  console.log('the user data for the user  is ', userData);
+  // console.log('the user data for the user  is ', userData);
 
   return (
     <Container>
@@ -165,28 +177,28 @@ export default function UserPage() {
                   ]}
                 />
 
-                {userData &&
-                  userData.map((data) => (
-                    <TableBody key={data.id}>
-                      <UserTableRow
-                        key={data.id}
-                        name={data.username}
-                        date_joined={data.date_joined}
-                        email={data.email}
-                        avatarURL={data.profilePictureURL}
-                        selected={selected.indexOf(data.username) !== -1}
-                        handleClick={(event) => handleClick(event, data.username)}
-                      />
-                      {/* ))} */}
+                {/* {users && */}
+                {users.map((data) => (
+                  <TableBody key={data.id}>
+                    <UserTableRow
+                      key={data.id}
+                      name={data.username}
+                      date_joined={data.date_joined}
+                      email={data.email}
+                      avatarURL={data.profilePictureURL}
+                      selected={selected.indexOf(data.username) !== -1}
+                      handleClick={(event) => handleClick(event, data.username)}
+                    />
+                    {/* ))} */}
 
-                      <TableEmptyRows
-                        height={77}
-                        // emptyRows={emptyRows(page, rowsPerPage, userData?.length)}
-                      />
+                    <TableEmptyRows
+                      height={77}
+                      // emptyRows={emptyRows(page, rowsPerPage, userData?.length)}
+                    />
 
-                      {/* {notFound && <TableNoData query={filterName} />} */}
-                    </TableBody>
-                  ))}
+                    {/* {notFound && <TableNoData query={filterName} />} */}
+                  </TableBody>
+                ))}
               </Table>
             )}
           </TableContainer>
