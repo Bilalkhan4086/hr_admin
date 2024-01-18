@@ -1,15 +1,13 @@
-import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
+import setupApiInterceptor from 'src/utils/interceptors';
+// import setupApiInterceptor from 'src/utils/interceptors';
 //-----------------------------------------------------------------------
-
 export const allUsers = createAsyncThunk('user/allUsers', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('https://api.enxsis.com/api/v1/users');
-
-    console.log('data', response.data);
-    return response.data;
+    const response = await setupApiInterceptor('/users', 'GET');
+    console.log('data', response);
+    return response;
   } catch (error) {
-    return rejectWithValue(error.response.data.message);
+    return rejectWithValue(error);
   }
 });

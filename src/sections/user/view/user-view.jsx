@@ -10,18 +10,20 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-// import UserData from 'src/httpRequests';
-import { allUsers } from 'src/redux-toolkit/actions/userActions';
-// import { users } from 'src/_mock/user';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import BarLoader from 'react-spinners/BarLoader';
 import { useTheme } from '@mui/material/styles';
+import { useSnackbar } from 'notistack';
 
+// import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
+import { allUsers } from 'src/redux-toolkit/actions/userActions';
+import { clearErrors } from 'src/redux-toolkit/reducers/userReducer';
 
 // import { emptyRows, applyFilter, getComparator } from '../utils';
 
@@ -39,18 +41,31 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  // const [userData, setUserData] = useState(null);
+
   const theme = useTheme();
 
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const users = useSelector((state) => state.user.users.data?.users);
-
-  console.log('wanted user', users);
+  const { users, error } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(allUsers());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error?.message, {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+      });
+    }
+
+    dispatch(clearErrors());
+  }, [error]);
   // useEffect(() => {
   //   UserData()
   //     .then((data) => setUserData(data.data.users))
@@ -147,7 +162,7 @@ export default function UserPage() {
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            {users === null ? (
+            {users.users === null ? (
               <div
                 style={{
                   display: 'flex',
@@ -164,7 +179,7 @@ export default function UserPage() {
                 <UserTableHead
                   // order={order}
                   // orderBy={orderBy}
-                  rowCount={users?.length}
+                  rowCount={users.users?.length}
                   numSelected={selected.length}
                   onRequestSort={handleSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -177,8 +192,8 @@ export default function UserPage() {
                   ]}
                 />
 
-                {users &&
-                  users.map((data) => (
+                {users.users &&
+                  users.users.map((data) => (
                     <TableBody key={data.id}>
                       <UserTableRow
                         key={data.id}
